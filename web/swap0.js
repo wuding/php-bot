@@ -60,6 +60,89 @@ function timeFormat(d) {
 function api(url)
 {
   console.log(94 +'= api('+ url +')')
+
+
+  // a. 时间
+
+  ele('execute_time').value = get_startTime()
+
+
+  // b. 缓存
+
+  url = url || ele('url').value
+  console.log('url = '+ url)
+  // 同一地址非连续请求无次数限制
+  if (lastUrl != url) {
+    REQ[url] = -1
+    lastUrl = url
+  }
+
+
+
+  // 计数
+  if (!REQ[url]) {
+    REQ[url] = 1
+  } else {
+    REQ[url]++
+  }
+
+  // c. 请求限制
+
+  console.log('frequency = '+ frequency)
+  if (frequency < REQ[url]) {
+    message('max request times '+ frequency)
+    return false
+  } else {
+    timeoutApi = 100 + REQ[url] * 100
+  }
+
+
+  // d. timeoutId
+
+  var xhr = getTime()
+  clearTimeout(timeoutId)
+  var timeoutId = setTimeout("apiAgain('" + url + "', " + xhr + ")", timeoutMs)
+
+
+  // e.
+
+  readyArr = [1, 2, 3]
+  statusArr = [0, 502, 504]
+  XHR[xhr] = x = new XMLHttpRequest()
+  x.onreadystatechange = function() {
+    clearTimeout(timeoutId)
+      readySt = x.readyState
+      if (4 == readySt) {
+          if (200 == x.status) {
+              text = x.responseText
+              if (text) {
+                  eval("json = " + text + "; apiCall(json, '" + xhr + "');")
+              } else {
+                  message('no response text ('+ xhr +') : '+  url)
+                  apiAgain(url, xhr)
+              }
+              ele('result_code').innerText = text
+
+          } else if (statusArr.includes(x.status)) {
+              apiAgain(url, xhr)
+
+          } else {
+              statusMsg(x, 'Problem retrieving data')
+          }
+
+      } else if (!readyArr.includes(readySt)) {
+          statusMsg(x, 'readyState: '+ readySt +' Problem status')
+      }
+  }
+  x.open('GET', url, true)
+  x.send(null)
+
+}
+
+
+// c. XHR 回调
+function apiCall(json, func) {
+  console.log(312 +'= apiCall('+ json +', '+ func +')')
 }
 
 
