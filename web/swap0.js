@@ -15,6 +15,7 @@ frequency = 3
 timeoutApi = 100
 offsetTime = 0
 timeoutMs = 300000
+timeoutVal = 1
 
 // c. 可未定义
 lastUrl = null
@@ -66,6 +67,41 @@ function secondFormat(time) {
 /*
 2. 项目
 */
+
+// 把网址转为名称
+function setItemName(url) {
+    url = url.trim()
+    search = url.search(/\?/)
+    itm = url.substring(0, search)
+    itm = itm.replace(/^http:\/+/gi, '')
+    itm = itm.replace(/^\/+/gi, '')
+    itm = itm.replace(/:\/+/gi, '.')
+    itm = itm.replace(/\//gi, '.')
+    ele('item').value = itm
+    return itm
+}
+
+function record(nm) {
+  console.log(89 +'record('+ nm +')')
+    obj = {
+        url: ele('url').value,
+        init_url: ele('init_url').value,
+        delay: ele('timeout').value,
+        maximum: ele('max_page').value,
+        interval: ele('millisec').value,
+        repeat: ele('repeat_time').value,
+        code: ele('code').value
+    }
+    //console.log(obj)
+    json = JSON.stringify(obj)
+    localStorage.setItem(nm, json)
+
+    if (!ele('init_url').value) {
+        ele('init_url').value = ele('url').value
+    }
+}
+
+
 
 
 /*
@@ -216,14 +252,15 @@ function apiCall(json, func) {
     start()
 
   } else if (!stop) {
-    api_call_fn0(urlMsg, nowTime)
+    api_call_fn0(urlMsg, urlPre, nowTime, json)
   }
 
 }
 
 
-function api_call_fn0(urlMsg, nowTime)
+function api_call_fn0(urlMsg, urlPre, nowTime, json)
 {
+  console.log(312 +'= api_call_fn0('+ urlMsg +', '+ urlPre +', '+ nowTime +', '+ json +')')
   var pageNo = 0
   var urlJson = json.msg
   if (urlJson) {
@@ -240,12 +277,14 @@ function api_call_fn0(urlMsg, nowTime)
   if (-1 == search) {
     var prefix = urlMsg
   } else {
-    api_call_fn1(pageNo, urlMsg, urlJson, nowTime, search, searchStr)
+    api_call_fn1(pageNo, urlMsg, urlPre, urlJson, nowTime, search, searchStr)
+
   }
 }
 
-function api_call_fn1(pageNo, urlMsg, urlJson, nowTime, search, searchStr)
+function api_call_fn1(pageNo, urlMsg, urlPre, urlJson, nowTime, search, searchStr)
 {
+  console.log(312 +'= api_call_fn1('+ pageNo +', '+ urlMsg +', '+ urlPre +', '+ urlJson +', '+ nowTime +', '+ search +', '+ searchStr +')')
   var prefix = urlMsg.substr(0, search) + '?'
   var substr = urlMsg.substr(search + 1)
   var split = substr.split(/&/)
@@ -278,10 +317,65 @@ function api_call_fn1(pageNo, urlMsg, urlJson, nowTime, search, searchStr)
     }
   }
   searchStr = searchStr.replace(/^&/, '')
+
+  api_call_fn2(json, pageNo, prefix, searchStr, urlPre)
 }
 
 
+function api_call_fn2(json, pageNo, prefix, searchStr, urlPre)
+{
+  console.log(312 +'= api_call_fn2('+ json +', '+ pageNo +', '+ prefix +', '+ searchStr +', '+ urlPre +')')
+  // 页数限制
+  var maxPage = num('max_page') || json.data.pageCount
+  inPage = 1
+  if (json.data.lastTime || (maxPage && pageNo > maxPage)) {
+    inPage = 0
+    start(1)
+  }
 
+  if (!inPage) {
+    message('pause')
+    return false
+  }
+
+  var urlInf = urlInfo = json.msg || prefix + searchStr
+  if (urlPre != urlInfo) {
+    message('url previous')
+    // return false
+  }
+
+  if (urlInfo && 'final' != urlInfo) {
+    if (json.data.timeout) {
+      ele('timeout').value = json.data.timeout
+    }
+
+
+    timeoutVal = ele('timeout').value
+    if (!timeoutVal) {
+      timeoutVal = 100
+    }
+    timeoutVal = parseInt(timeoutVal) + timeoutApi
+
+
+    var timeoutUrl = '-'
+    var urlPrefix = urlInfo.trim().search(/^(http|\/)/i)
+    if (-1 == urlPrefix) {
+      urlInfo = urlInf
+    }
+    ele('url').value = urlInfo
+    timeoutUrl = setTimeout("api('"+ urlInfo +"')", timeoutVal)
+
+    message('t' + timeoutUrl + ' urlPrefix ' + urlPrefix + ' ' + urlInfo, 'note')
+
+    var item = ele('item').value.trim()
+    if (item) {
+      record(item)
+    } else {
+      setItemName(urlInfo)
+    }
+
+  }
+}
 
 
 /*
