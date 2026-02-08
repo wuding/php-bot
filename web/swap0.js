@@ -90,7 +90,7 @@ function setItemName(url) {
 }
 
 function record(nm) {
-  c
+console.log(89 +'record('+ nm +')')
     obj = {
         url: ele('url').value,
         init_url: ele('init_url').value,
