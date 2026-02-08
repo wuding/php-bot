@@ -24,7 +24,7 @@ timeoutId = null
 // 数组定义，连等会合并键名
 REQ = []
 XHR = []
-
+LOG = []
 
 
 
@@ -42,6 +42,14 @@ function ele(id) {
 
 function num(id) {
     return parseInt(ele(id).value)
+}
+
+// b. 列表操作
+function selectChange(obj) {
+    start(1)
+    ele('item').value = itm = log.options[ log.selectedIndex ].text
+    ele('url').value = obj.value
+    recovery(0, itm)
 }
 
 // c. 格式化时间
@@ -82,7 +90,7 @@ function setItemName(url) {
 }
 
 function record(nm) {
-  console.log(89 +'record('+ nm +')')
+  c
     obj = {
         url: ele('url').value,
         init_url: ele('init_url').value,
@@ -101,8 +109,68 @@ function record(nm) {
     }
 }
 
+function localLogOpt(value, index, array)
+{
+  console.log(89 +'localLogOpt('+ value +','+ index +','+ array +')')
+    obj = LOG[index]
+    url = obj.url
 
+    opt = document.createElement("option")
+    opt.innerHTML = value
+    opt.setAttribute('value', url)
 
+    log = ele('request_log')
+    console.log(log);
+    try {
+        log.append(opt)
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+function localLog()
+{
+    keys = []
+    for (i = 0; i < localStorage.length; i++) {
+        key = localStorage.key(i)
+        val = localStorage.getItem(key)
+        regex = /^\{/i
+        result = regex.test(val)
+        if (!result) {
+            continue
+        }
+
+        obj = JSON.parse(val)
+        LOG.push(obj)
+        keys.push(key)
+    }
+    keys.sort()
+    keys.forEach(localLogOpt)
+}
+
+// 从项目恢复
+function recovery(c, itm) {
+    item = itm || ele('item').value
+    if (item) {
+        json = localStorage.getItem(item)
+        obj = JSON.parse(json)
+        console.log(obj)
+        wayback(obj)
+    }
+    if (c) {
+        start()
+    }
+}
+
+function wayback(obj) {
+    ele('url').value = obj.url
+    ele('timeout').value = obj.delay
+    ele('max_page').value = obj.maximum
+    ele('millisec').value = obj.interval
+    ele('repeat_time').value = obj.repeat
+    ele('code').value = obj.code
+    ele('init_url').value = obj.init_url
+}
 
 /*
 3. API
