@@ -2,14 +2,16 @@
 
 // PRINT_R($_SERVER);die;
 
-// version 1.260208
+// version 2.260209
 
 $page = $_GET['page'] ?? 1;
 $request_time_float = $_SERVER['REQUEST_TIME_FLOAT'];
 $queryString = $_SERVER['QUERY_STRING'] ?? null;
-$strpos = strpos($queryString, '&');
-$url = substr($queryString, 0, $strpos);
-$query = substr($queryString, $strpos + 1);
+$strpo = strpos($queryString, '=');
+$queryStr = substr($queryString, $strpo + 1);
+$strpos = strpos($queryStr, '&');
+$url = substr($queryStr, 0, $strpos);
+$query = substr($queryStr, $strpos + 1);
 
 $filename = "http://127.0.0.1:17400/api/v2/robot/Apps/apple/Url/locationParse?page=$page";
 $filename = "$url?$query";
