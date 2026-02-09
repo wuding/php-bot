@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html version="1.260208">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+  <script type="text/javascript" src="swap0.js?v=12"></script>
+</head>
+<body>
+<details open>
+  <summary>1. 请求</summary>
+  <div>
+    <p>
+      <tt>请求地址</tt>
+      <input id="url" value="/api.php?version=3&method=test&page=1" style="width: 80%;">
+      <button id="btn-request" type="button" onclick="start()">继续</button>
+    </p>
+    <p>
+      <tt>请求键名</tt>
+      <input id="item" name="request_key" value="">
+    </p>
+    <p>
+      <tt>请求记录</tt>
+      <select id="request_log" onchange="selectChange(this)">
+        <option></option>
+      </select>
+    </p>
+    <p>
+      <tt>初始地址</tt>
+      <input id="init_url" value="" style="width: 80%;">
+    </p>
+    <p>
+      <tt>请求延时</tt>
+      <input id="timeout" name="delay" value="1">
+    </p>
+    <p>
+      <tt>最大页码</tt>
+      <input id="max_page" name="maximum" value="">
+    </p>
+  </div>
+</details>
+
+<details open>
+  <summary>2. 计划</summary>
+  <div>
+    <p>
+      <textarea id="code" style="width:100%" placeholder="任务代码">retry();</textarea>
+    </p>
+    <p>
+      <tt>间隔毫秒</tt>
+      <input id="millisec" name="interval" value="">
+    </p>
+    <p>
+      <tt>重复次数</tt>
+      <input id="repeat_time" name="repeat" value="">
+    </p>
+  </div>
+</details>
+
+<details open>
+  <summary>3. 统计</summary>
+  <div>
+    <p>
+      <tt>初始时间</tt>
+      <input id="init_time">
+    </p>
+    <p>
+      <span>
+        <tt>开始时间</tt>
+        <input id="start_time">
+      </span>
+      <span>
+        <tt>上次完成</tt>
+        <input id="last_time" value="">
+      </span>
+      <span>
+        <tt>本次执行</tt>
+        <input id="execute_time">
+      </span>
+    </p>
+    <p>
+      <span>
+        <tt>总计用时</tt>
+        <input id="use_time" value="0">
+      </span>
+      <span>
+        <tt>上次用时</tt>
+        <input id="last_use" value="0">
+      </span>
+      <span>
+        <tt>实际总计</tt>
+        <input id="use_real" value="0" style="width:200px" disabled>
+      </span>
+    </p>
+    <p>
+      <span>
+        <tt>平均用时</tt>
+        <input id="avg_time" value="0">
+      </span>
+      <span>
+        <tt>请求次数</tt>
+        <input id="requests" value="0">
+      </span>
+      <span>
+        <tt>实际平均</tt>
+        <input id="avg_real" value="0" style="width:200px" disabled>
+      </span>
+    </p>
+  </div>
+</details>
+
+<details open>
+  <summary>4. 消息</summary>
+  <div>
+    <p>
+      <b>msg</b>
+      <pre id="msg"></pre>
+    </p>
+    <p>
+      <b>note</b>
+      <div id="note"></div>
+    </p>
+    <p>
+      <b>结果</b>
+      <pre id="result_code"></pre>
+    </p>
+    <p>
+      <b>日志</b>
+      <textarea id="result_log" style="width:100%" rows="10"></textarea>
+    </p>
+  </div>
+</details>
+
+<script type="text/javascript">
+/*
+8. run
+*/
+
+ele('init_time').value = get_startTime()
+
+// 支持情况
+var storageType = typeof(Storage)
+if ('function' !== storageType) {
+    message("抱歉! 不支持 web 存储。"+ storageType)
+} else {
+    localLog()
+}
+</script>
+</body>
+</html>
