@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html version="1.260208">
+<html version="2.260215" time="1322">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title></title>
-  <script type="text/javascript" src="swap0.js?v=12"></script>
+  <script type="text/javascript" src="swap0.js?v=1234"></script>
 </head>
 <body>
 <details open>
@@ -12,12 +12,12 @@
   <div>
     <p>
       <tt>请求地址</tt>
-      <input id="url" value="/api.php?version=3&method=test&page=1" style="width: 80%;">
+      <input id="url" value="/api.php?version=3&method=test&page=1" style="width: 80%;" onfocus="this.select()" placeholder="/api.php?0=http://127.0.0.1:13025/api/v2/robot/Apps/apple/Url/locationHtml&page=2">
       <button id="btn-request" type="button" onclick="start()">继续</button>
     </p>
     <p>
       <tt>请求键名</tt>
-      <input id="item" name="request_key" value="">
+      <input id="item" name="request_key" value="" style="width: 80%;" onfocus="this.select()">
     </p>
     <p>
       <tt>请求记录</tt>
@@ -27,7 +27,7 @@
     </p>
     <p>
       <tt>初始地址</tt>
-      <input id="init_url" value="" style="width: 80%;">
+      <input id="init_url" value="" style="width: 80%;" onfocus="this.select()">
     </p>
     <p>
       <tt>请求延时</tt>
@@ -35,7 +35,31 @@
     </p>
     <p>
       <tt>最大页码</tt>
-      <input id="max_page" name="maximum" value="">
+      <input id="max_page" name="maximum" value="" onfocus="this.select()">
+    </p>
+    <p>
+      <tt>最后页码</tt>
+      <input id="last_page" value="">
+    </p>
+    <p>
+      <tt>当前页码</tt>
+      <input id="current_page" value="" disabled>
+    </p>
+    <p>
+      <tt>剩余页数</tt>
+      <input id="remain_pages" value="" disabled>
+    </p>
+    <p>
+      <tt>线程数量</tt>
+      <input id="threads" value="1">
+    </p>
+    <p>
+      <tt>线程页面</tt>
+      <input id="thread" value="" disabled>
+    </p>
+    <p>
+      <tt>预计时间</tt>
+      <input id="final_time" value="" disabled>
     </p>
   </div>
 </details>
@@ -62,30 +86,34 @@
   <div>
     <p>
       <tt>初始时间</tt>
-      <input id="init_time">
+      <input id="init_time" style="width: 80%;" disabled>
     </p>
     <p>
       <span>
         <tt>开始时间</tt>
-        <input id="start_time">
+        <input id="start_time" disabled>
       </span>
       <span>
         <tt>上次完成</tt>
-        <input id="last_time" value="">
+        <input id="last_time" value="" disabled>
       </span>
       <span>
         <tt>本次执行</tt>
-        <input id="execute_time">
+        <input id="execute_time" disabled>
+      </span>
+      <span>
+        <tt>暂停时间</tt>
+        <input id="time_pause" disabled>
       </span>
     </p>
     <p>
       <span>
         <tt>总计用时</tt>
-        <input id="use_time" value="0">
+        <input id="use_time" value="0" disabled>
       </span>
       <span>
         <tt>上次用时</tt>
-        <input id="last_use" value="0">
+        <input id="last_use" value="0" disabled>
       </span>
       <span>
         <tt>实际总计</tt>
@@ -95,15 +123,30 @@
     <p>
       <span>
         <tt>平均用时</tt>
-        <input id="avg_time" value="0">
+        <input id="avg_time" value="0" disabled>
       </span>
       <span>
         <tt>请求次数</tt>
-        <input id="requests" value="0">
+        <input id="requests" value="0" disabled>
       </span>
       <span>
         <tt>实际平均</tt>
         <input id="avg_real" value="0" style="width:200px" disabled>
+      </span>
+    </p>
+    <p>
+      <span>
+        <tt>回调时间</tt>
+        <input id="time_now" disabled>
+      </span>
+
+      <span>
+        <tt>暂停时间</tt>
+        <input id="time_offset" disabled>
+      </span>
+      <span>
+        <tt>偏移时间</tt>
+        <input id="offsets" disabled>
       </span>
     </p>
   </div>
@@ -112,21 +155,58 @@
 <details open>
   <summary>4. 消息</summary>
   <div>
-    <p>
-      <b>msg</b>
+    <fieldset>
+      <legend><b>msg</b></legend>
       <pre id="msg"></pre>
-    </p>
-    <p>
-      <b>note</b>
+    </fieldset>
+    <fieldset>
+      <legend><b>note</b></legend>
       <div id="note"></div>
-    </p>
-    <p>
-      <b>结果</b>
+    </fieldset>
+    <fieldset>
+      <legend><b>结果</b></legend>
       <pre id="result_code"></pre>
-    </p>
+    </fieldset>
     <p>
       <b>日志</b>
       <textarea id="result_log" style="width:100%" rows="10"></textarea>
+    </p>
+    <fieldset>
+      <legend></legend>
+    </fieldset>
+  </div>
+</details>
+
+<details open>
+  <summary>5. 缓存订阅通知</summary>
+  <div>
+    <p>
+      <tt>推送地址</tt>
+      <input id="push_url" value="/api.php?0=http://127.0.0.1:13025/api/v2/robot/Mem/redis/Json/push&page=2" style="width: 80%;" onfocus="this.select()" placeholder="">
+      <button id="btn_push" type="button" onclick="push_start()">继续</button>
+    </p>
+    <p>
+      <tt>请求延时</tt>
+      <input id="push_timeout" value="60000">
+    </p>
+
+    <fieldset>
+      <legend><b>结果</b></legend>
+      <pre id="push_result"></pre>
+    </fieldset>
+    <p>
+    <span>
+      <tt>上次完成</tt>
+      <input id="push_last_time" value="" disabled>
+    </span>
+    <span>
+      <tt>本次执行</tt>
+      <input id="push_execute_time" disabled>
+    </span>
+    </p>
+    <p>
+      <b>日志</b>
+      <textarea id="push_log" style="width:100%" rows="10"></textarea>
     </p>
   </div>
 </details>
@@ -136,7 +216,7 @@
 8. run
 */
 
-ele('init_time').value = get_startTime()
+ele('init_time').value = new Date()
 
 // 支持情况
 var storageType = typeof(Storage)
