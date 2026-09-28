@@ -1,4 +1,4 @@
-// version 1.260208
+// version 7.260215
 
 /*
 0. define
@@ -111,7 +111,7 @@ console.log(89 +'record('+ nm +')')
 
 function localLogOpt(value, index, array)
 {
-  console.log(89 +'localLogOpt('+ value +','+ index +','+ array +')')
+  console.log(89 +'localLogOpt('+ value +','+ index +',array)')
     obj = LOG[index]
     url = obj.url
 
@@ -120,7 +120,7 @@ function localLogOpt(value, index, array)
     opt.setAttribute('value', url)
 
     log = ele('request_log')
-    console.log(log);
+    // console.log(log);
     try {
         log.append(opt)
     } catch (err) {
@@ -291,13 +291,14 @@ function apiCall(json, func) {
   // d. 偏移量
   var d = new Date()
   var nowTime = d.getTime()
+  ele('time_now').value = nowTime
   var offset = 0
 
   if (offsetTime) {
-    offset = parseInt(nowTime) - parseInt(offsetTime)
-    message('offset : '+ offset)
+    ele('offsets').value = offset = parseInt(nowTime) - parseInt(offsetTime)
+    // message('offset : '+ offset)
     if (!stop) {
-      offsetTime = 0
+      ele('time_offset').value = offsetTime = 0
     }
   }
 
@@ -364,7 +365,7 @@ function api_call_fn1(pageNo, urlMsg, urlPre, urlJson, nowTime, search, searchSt
     if ('page' == name) {
       pageNo = parseInt(val)
       ele('last_time').value = tm = get_startTime()
-      timeOver = parseInt(nowTime) - parseInt(lastTime)
+      var timeOver = parseInt(nowTime) - parseInt(lastTime)
 
       ele('last_use').value = sm = secondFormat(timeOver)
       document.title = pageNo +'('+ sm +')'+ tm
@@ -376,7 +377,7 @@ function api_call_fn1(pageNo, urlMsg, urlPre, urlJson, nowTime, search, searchSt
       // break
 
       if (!urlJson) {
-      pageNo = val = pageNo + 1
+        pageNo = val = pageNo + 1
       }
     }
 
@@ -401,6 +402,9 @@ function api_call_fn2(json, pageNo, prefix, searchStr, urlPre)
     start(1)
   }
 
+  //
+  ele('current_page').value = pageNo
+
   if (!inPage) {
     message('pause')
     return false
@@ -408,7 +412,7 @@ function api_call_fn2(json, pageNo, prefix, searchStr, urlPre)
 
   var urlInf = urlInfo = json.msg || prefix + searchStr
   if (urlPre != urlInfo) {
-    message('url previous')
+    // message('url previous')
     // return false
   }
 
@@ -442,6 +446,18 @@ function api_call_fn2(json, pageNo, prefix, searchStr, urlPre)
       setItemName(urlInfo)
     }
 
+
+    // final
+    var last_page = ele('last_page').value
+    if (!last_page) {
+      ele('last_page').value = ele('max_page').value
+    }
+    ele('remain_pages').value = ele('last_page').value - ele('current_page').value;
+    var total_time = ele('avg_time').value * ele('remain_pages').value
+    var threads = ele('threads').value
+    ele('final_time').value = total_time / threads
+    ele('thread').value = ele('remain_pages').value / threads
+    console.log([total_time, threads])
   }
 }
 
@@ -470,7 +486,7 @@ function start(s)
     pause()
     step = 0
 
-    offsetTime = getTime()
+    ele('time_offset').value = offsetTime = getTime()
 
   } else if (!step) {
     btn.innerHTML = '暂停'
@@ -491,6 +507,7 @@ function pause()
   console.log(71 +'= pause()')
   stop = 1
   step = 0
+  ele('time_pause').value = get_startTime()
 }
 
 
